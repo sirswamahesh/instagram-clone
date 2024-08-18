@@ -11,85 +11,91 @@ import CreatePost from "./pages/CreatePost";
 import Notifications from "./pages/Notifications";
 import Messages from "./pages/Message";
 import Setting from "./pages/Setting";
+import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <LayoutWithSidebar>
-              <Home />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route
-          path="/explore"
-          element={
-            <LayoutWithSidebar>
-              <Explore />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/search"
-          element={
-            <LayoutWithSidebar>
-              <Search />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/Reels"
-          element={
-            <LayoutWithSidebar>
-              <Reels />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/messages"
-          element={
-            <LayoutWithSidebar>
-              <Messages />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            <LayoutWithSidebar>
-              <Notifications />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/create-post"
-          element={
-            <LayoutWithSidebar>
-              <CreatePost />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/Profile"
-          element={
-            <LayoutWithSidebar>
-              <Profile />
-            </LayoutWithSidebar>
-          }
-        />
-        <Route
-          path="/setting"
-          element={
-            <LayoutWithSidebar>
-              <Setting />
-            </LayoutWithSidebar>
-          }
-        />
+        <Route element={<PublicRoute />}>
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route
+            path="/"
+            element={
+              <LayoutWithSidebar>
+                <Home />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/explore"
+            element={
+              <LayoutWithSidebar>
+                <Explore />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <LayoutWithSidebar>
+                <Search />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/Reels"
+            element={
+              <LayoutWithSidebar>
+                <Reels />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <LayoutWithSidebar>
+                <Messages />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <LayoutWithSidebar>
+                <Notifications />
+              </LayoutWithSidebar>
+            }
+          />
+          {/* <Route
+            path="/create-post"
+            element={
+              <LayoutWithSidebar>
+                <CreatePost />
+              </LayoutWithSidebar>
+            }
+          /> */}
+          <Route
+            path="/Profile"
+            element={
+              <LayoutWithSidebar>
+                <Profile />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/setting"
+            element={
+              <LayoutWithSidebar>
+                <Setting />
+              </LayoutWithSidebar>
+            }
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
