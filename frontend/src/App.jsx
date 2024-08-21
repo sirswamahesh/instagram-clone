@@ -13,7 +13,8 @@ import Messages from "./pages/Message";
 import Setting from "./pages/Setting";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function App() {
   return (
     <BrowserRouter>
@@ -97,6 +98,7 @@ export default function App() {
           />
         </Route>
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
   );
 }

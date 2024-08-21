@@ -1,4 +1,4 @@
-import { Sidebar } from "flowbite-react";
+import { Avatar, Sidebar } from "flowbite-react";
 import {
   HiArrowSmRight,
   HiInbox,
@@ -21,12 +21,16 @@ import { FaRegSquarePlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { CreatePostBox } from "./CreatePostBox";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export function SideBar() {
   const [openModal, setOpenModal] = useState(false);
   const CreatePostHandler = () => {
     setOpenModal(true);
   };
+
+  const { currentUser } = useSelector((state) => state.user);
+
   return (
     <>
       <Sidebar className="min-h-screen border-r-2">

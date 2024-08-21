@@ -2,6 +2,7 @@ import { Button, Label, Spinner, TextInput, Toast } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { toast } from "react-toastify";
 function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
@@ -10,7 +11,6 @@ function SignUp() {
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
 
   const changeHandler = (e) => {
@@ -36,9 +36,8 @@ function SignUp() {
       }
       setLoading(false);
       if (res.ok) {
-        setShowToast(true);
         setTimeout(() => {
-          setShowToast(false);
+          toast.success("Signup successfuly!");
           navigate("/sign-in");
         }, 3000);
       }
@@ -110,31 +109,6 @@ function SignUp() {
           )}
         </div>
       </div>
-
-      {showToast && (
-        <div className="fixed bottom-5 right-5">
-          <Toast>
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <div className="ml-3 text-sm font-normal">Sign up successful!</div>
-            <Toast.Toggle />
-          </Toast>
-        </div>
-      )}
     </div>
   );
 }

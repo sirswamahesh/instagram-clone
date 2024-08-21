@@ -1,15 +1,24 @@
 import { Avatar } from "flowbite-react";
 import React from "react";
 import { Account } from "./Account";
+import { useSelector } from "react-redux";
 
 const RightSidebar = () => {
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <div className="flex justify-between items-center group">
       <div className="flex gap-3">
-        <Avatar placeholderInitials="CN" className="object-cover" rounded />
+        <Avatar
+          placeholderInitials="CN"
+          img={currentUser.user.profilePicture}
+          className="object-cover"
+          rounded
+        />
         <div className="font-medium dark:text-white">
-          <h1>mahesh_sirswa</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">__MAHESH__</p>
+          <h1>{currentUser.user.username}</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {currentUser.user.bio}
+          </p>
         </div>
       </div>
       <div className=" text-blue-500 font-medium">Switch</div>

@@ -63,7 +63,7 @@ function SignIn() {
             <div>
               <Label value="Your password" />
               <TextInput
-                type="text"
+                type="password"
                 name="password"
                 placeholder="Password"
                 id="password"
