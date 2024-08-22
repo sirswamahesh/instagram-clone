@@ -1,7 +1,7 @@
-import { Avatar, TextInput, Toast } from "flowbite-react";
-import React, { useState } from "react";
+import { Avatar, Spinner, TextInput, Toast } from "flowbite-react";
+import React, { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { FaBorderNone, FaRegHeart } from "react-icons/fa";
+import { FaBorderNone, FaHeart, FaRegHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
 import SaveIcon from "../icons/save";
@@ -9,10 +9,12 @@ import { DialogBox } from "./DialogBox";
 import { IoMdHeart } from "react-icons/io";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import { getPosts } from "../redux/post/postSlice";
-import { toast } from "react-toastify";
+import { getPosts, selectedPost } from "../redux/post/postSlice";
+import CustomToast from "./CustomToast";
+import CommentBox from "./CommentBox";
 const Post = ({ post }) => {
   const [openModal, setOpenModal] = useState(false);
+  const [showCommentBox, setShowCommentBox] = useState(false);
   const [comment, setComment] = useState("");
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -20,7 +22,12 @@ const Post = ({ post }) => {
   const [liked, setLiked] = useState(
     post.likes.includes(currentUser.user._id) || false
   );
+  const [loading, setLoading] = useState(false);
+  const [postComment, setPostComment] = useState([]);
 
+  useEffect(() => {
+    setPostComment(post.comments);
+  }, [post]);
   const LikeOrDisLikeHandler = async (postId) => {
     const action = liked ? "dislike" : "like";
 
@@ -42,10 +49,38 @@ const Post = ({ post }) => {
             : p
         );
         dispatch(getPosts(updatedPostData));
-        toast.success(data.message);
+        CustomToast(data.message);
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+  const CommentHandler = async (postId) => {
+    setLoading(true);
+    const res = await fetch(`/api/post/${postId}/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: comment }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      CustomToast(data.message);
+      setLoading(false);
+      const updatedCommentData = [...postComment, data.comment];
+      setPostComment(updatedCommentData);
+
+      const updatedPostData = posts.map((p) =>
+        p._id === postId
+          ? {
+              ...p,
+              comments: [...p.comments, data.comment],
+            }
+          : p
+      );
+      dispatch(getPosts(updatedPostData));
+      setComment("");
     }
   };
   return (
@@ -87,7 +122,7 @@ const Post = ({ post }) => {
       <div className="flex justify-between my-4">
         <div className="flex justify-between gap-3">
           {liked ? (
-            <IoMdHeart
+            <FaHeart
               className="text-[25px]"
               color="red"
               onClick={() => LikeOrDisLikeHandler(post._id)}
@@ -98,8 +133,19 @@ const Post = ({ post }) => {
               onClick={() => LikeOrDisLikeHandler(post._id)}
             />
           )}
+          <div
+            onClick={() => {
+              dispatch(selectedPost(post));
+              setShowCommentBox(true);
+            }}
+          >
+            <FaRegComment className="text-[25px]" />
+          </div>
+          <CommentBox
+            showCommentBox={showCommentBox}
+            setShowCommentBox={setShowCommentBox}
+          />
 
-          <FaRegComment className="text-[25px]" />
           <TbLocationShare className="text-[25px]" />
         </div>
         <div>
@@ -112,7 +158,7 @@ const Post = ({ post }) => {
         <p className="ml-2 text-[14px]">{post.caption}</p>
       </div>
       <div className="text-sm my-1 text-gray-500 dark:text-gray-400">
-        View all 372 comments
+        View all {postComment.length} comments
       </div>
       <div className="relative mt-3">
         <input
@@ -124,8 +170,18 @@ const Post = ({ post }) => {
           onFocus={FaBorderNone}
         />
         {comment.length > 0 && (
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 font-medium">
-            Post
+          <button
+            onClick={() => CommentHandler(post._id)}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 font-medium"
+          >
+            {loading ? (
+              <>
+                <Spinner size="sm" />
+                <span className="pl-3">Loading...</span>
+              </>
+            ) : (
+              "Post"
+            )}
           </button>
         )}
       </div>

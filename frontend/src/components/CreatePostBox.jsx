@@ -1,9 +1,11 @@
 import { Avatar, Button, Modal, Spinner, Toast } from "flowbite-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { getPosts } from "../redux/post/postSlice";
+import { authUser } from "../redux/user/userSlice";
 
+import { useNavigate } from "react-router-dom";
 export function CreatePostBox({ openModal, setOpenModal }) {
   const { currentUser } = useSelector((state) => state.user);
   const [caption, setCaption] = useState("");
@@ -12,7 +14,8 @@ export function CreatePostBox({ openModal, setOpenModal }) {
   const imgRef = useRef();
   const post = useSelector((state) => state.post);
   const dispatch = useDispatch();
-
+  const navigation = useNavigate();
+  const [currentUserPost, setCurrentUserPost] = useState();
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,9 +55,18 @@ export function CreatePostBox({ openModal, setOpenModal }) {
       if (res.ok) {
         setLoading(false);
         dispatch(getPosts([data.post, ...post.posts]));
+        const updatedUser = {
+          ...currentUser.user,
+          posts: [...(currentUser?.user?.posts || []), data.post],
+        };
+
+        dispatch(authUser(updatedUser));
         setCaption("");
         setImage(null);
         toast.success(data.message);
+        setTimeout(() => {
+          navigation("/");
+        }, 3000);
       } else {
         throw new Error("Failed to create post");
       }

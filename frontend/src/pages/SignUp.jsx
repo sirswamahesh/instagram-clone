@@ -1,8 +1,15 @@
-import { Button, Label, Spinner, TextInput, Toast } from "flowbite-react";
+import {
+  Alert,
+  Button,
+  Label,
+  Spinner,
+  TextInput,
+  Toast,
+} from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
@@ -37,7 +44,7 @@ function SignUp() {
       setLoading(false);
       if (res.ok) {
         setTimeout(() => {
-          toast.success("Signup successfuly!");
+          toast("Signup successfuly!");
           navigate("/sign-in");
         }, 3000);
       }

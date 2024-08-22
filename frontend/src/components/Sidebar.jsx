@@ -15,22 +15,38 @@ import {
   IoSearchSharp,
   IoReorderThreeSharp,
 } from "react-icons/io5";
+import { RiLogoutCircleRLine } from "react-icons/ri";
+
 import { MdOutlineExplore } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegSquarePlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { CreatePostBox } from "./CreatePostBox";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { authUser } from "../redux/user/userSlice";
+import { getPosts } from "../redux/post/postSlice";
+import { useNavigate } from "react-router-dom";
+import CustomToast from "./CustomToast";
 export function SideBar() {
   const [openModal, setOpenModal] = useState(false);
   const CreatePostHandler = () => {
     setOpenModal(true);
   };
-
+  const navigation = useNavigate();
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
 
+  const logoutHandler = async () => {
+    const res = await fetch("/api/user/logout");
+    const data = await res.json();
+    if (data.success) {
+      dispatch(authUser(null));
+      dispatch(getPosts([]));
+      CustomToast(data.message);
+      navigation("/sign-in");
+    }
+  };
   return (
     <>
       <Sidebar className="min-h-screen border-r-2">
@@ -62,10 +78,9 @@ export function SideBar() {
             <Sidebar.Item as={Link} to="/profile" icon={CgProfile}>
               Profile
             </Sidebar.Item>
-
-            <Sidebar.Item as={Link} to="/setting" icon={IoReorderThreeSharp}>
-              More
-            </Sidebar.Item>
+            <div onClick={logoutHandler} className=" cursor-pointer">
+              <Sidebar.Item icon={RiLogoutCircleRLine}>Logout</Sidebar.Item>
+            </div>
           </Sidebar.ItemGroup>
         </Sidebar.Items>
       </Sidebar>

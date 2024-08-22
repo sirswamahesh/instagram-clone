@@ -10,14 +10,14 @@ const RightSidebar = () => {
       <div className="flex gap-3">
         <Avatar
           placeholderInitials="CN"
-          img={currentUser.user.profilePicture}
+          img={currentUser?.user?.profilePicture}
           className="object-cover"
           rounded
         />
         <div className="font-medium dark:text-white">
-          <h1>{currentUser.user.username}</h1>
+          <h1>{currentUser?.user?.username}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {currentUser.user.bio}
+            {currentUser?.user?.bio}
           </p>
         </div>
       </div>

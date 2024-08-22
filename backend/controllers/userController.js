@@ -95,7 +95,7 @@ const login = async (req, res) => {
     console.log(error);
   }
 };
-const logout = async (_, res) => {
+const logout = async (req, res) => {
   try {
     return res.cookie("token", "", { maxAge: 0 }).json({
       message: "Logged out successfully.",

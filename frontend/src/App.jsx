@@ -15,6 +15,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
 export default function App() {
   return (
     <BrowserRouter>
@@ -72,14 +73,14 @@ export default function App() {
               </LayoutWithSidebar>
             }
           />
-          {/* <Route
+          <Route
             path="/create-post"
             element={
               <LayoutWithSidebar>
                 <CreatePost />
               </LayoutWithSidebar>
             }
-          /> */}
+          />
           <Route
             path="/Profile"
             element={
@@ -99,6 +100,7 @@ export default function App() {
         </Route>
       </Routes>
       <ToastContainer />
+      <Toaster />
     </BrowserRouter>
   );
 }
