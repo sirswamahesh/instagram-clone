@@ -8,6 +8,7 @@ const SaveIcon = (props) => {
       role="img"
       viewBox="0 0 24 24"
       width="24"
+      strokeWidth="2"
     >
       <title>Save</title>
       <polygon

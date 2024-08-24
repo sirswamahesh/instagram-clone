@@ -11,12 +11,12 @@ const postSlice = createSlice({
     getPosts: (state, action) => {
       state.posts = action.payload;
     },
-    selectedPost: (state, action) => {
+    setSelectedPost: (state, action) => {
       state.selectedPost = action.payload;
     },
   },
 });
 
-export const { getPosts, selectedPost } = postSlice.actions;
+export const { getPosts, setSelectedPost } = postSlice.actions;
 
 export default postSlice.reducer;

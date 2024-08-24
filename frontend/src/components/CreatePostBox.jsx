@@ -15,7 +15,6 @@ export function CreatePostBox({ openModal, setOpenModal }) {
   const post = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const [currentUserPost, setCurrentUserPost] = useState();
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -56,8 +55,11 @@ export function CreatePostBox({ openModal, setOpenModal }) {
         setLoading(false);
         dispatch(getPosts([data.post, ...post.posts]));
         const updatedUser = {
-          ...currentUser.user,
-          posts: [...(currentUser?.user?.posts || []), data.post],
+          ...currentUser,
+          user: {
+            ...currentUser.user,
+            posts: [...currentUser.user.posts, data.post],
+          },
         };
 
         dispatch(authUser(updatedUser));

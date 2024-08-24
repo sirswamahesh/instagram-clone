@@ -24,7 +24,11 @@ import { Link } from "react-router-dom";
 import { CreatePostBox } from "./CreatePostBox";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { authUser } from "../redux/user/userSlice";
+import {
+  authUser,
+  getUserProfile,
+  suggestedUsers,
+} from "../redux/user/userSlice";
 import { getPosts } from "../redux/post/postSlice";
 import { useNavigate } from "react-router-dom";
 import CustomToast from "./CustomToast";
@@ -43,6 +47,8 @@ export function SideBar() {
     if (data.success) {
       dispatch(authUser(null));
       dispatch(getPosts([]));
+      dispatch(suggestedUsers([]));
+      dispatch(getUserProfile(null));
       CustomToast(data.message);
       navigation("/sign-in");
     }

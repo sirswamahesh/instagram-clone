@@ -71,6 +71,14 @@ const login = async (req, res) => {
         return null;
       })
     );
+    const populatedBookMarkedPosts = await Promise.all(
+      user.bookmarks.map(async (postId) => {
+        const post = await Post.findById(postId);
+        if (post) {
+          return post;
+        }
+      })
+    );
     user = {
       _id: user._id,
       username: user.username,
@@ -80,6 +88,7 @@ const login = async (req, res) => {
       followers: user.followers,
       following: user.following,
       posts: populatedPosts,
+      bookmarks: populatedBookMarkedPosts,
     };
     res
       .cookie("token", token, {
@@ -108,7 +117,10 @@ const logout = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const userId = req.params.id;
-    let user = await User.findById(userId).select("-password");
+    let user = await User.findById(userId)
+      .select("-password")
+      .populate({ path: "posts", createdAt: -1 })
+      .populate("bookmarks");
     return res.status(200).json({
       user,
       success: true,

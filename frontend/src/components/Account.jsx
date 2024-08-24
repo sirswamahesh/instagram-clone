@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 export function Account() {
   const { currentUser } = useSelector((state) => state.user);
-  console.log(currentUser);
+  // console.log(currentUser);
   return (
     <div className="flex flex-col  w-[370px]">
       <div className="flex gap-3">

@@ -2,7 +2,7 @@ import { Avatar, Button, Modal, Spinner, TextInput } from "flowbite-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPosts } from "../redux/post/postSlice";
+import { getPosts, setSelectedPost } from "../redux/post/postSlice";
 import CustomToast from "./CustomToast";
 
 const CommentBox = ({ showCommentBox, setShowCommentBox }) => {
@@ -43,11 +43,16 @@ const CommentBox = ({ showCommentBox, setShowCommentBox }) => {
       setComment("");
     }
   };
+  const handleCloseModal = () => {
+    dispatch(setSelectedPost(null));
+    setShowCommentBox(false);
+    console.log("dsss");
+  };
   return (
     <>
       <Modal
         show={showCommentBox}
-        onClose={() => setShowCommentBox(false)}
+        onClose={handleCloseModal}
         dismissible
         // popup
         style={{
@@ -84,8 +89,8 @@ const CommentBox = ({ showCommentBox, setShowCommentBox }) => {
                 </div>
               </div>
               <div className=" max-h-[400px] overflow-y-scroll pb-8">
-                {postComment?.map((comment) => (
-                  <div className="mt-1 p-3 ">
+                {postComment?.map((comment, i) => (
+                  <div className="mt-1 p-3" key={i}>
                     <div className="flex gap-3 p-3 items-start">
                       <Avatar
                         placeholderInitials="CN"

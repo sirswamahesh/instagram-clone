@@ -3,6 +3,7 @@ const Post = require("../models/postModel");
 const User = require("../models/userModel");
 const Comment = require("../models/commentModel");
 const cloudinary = require("../utils/cloudinary");
+const { getReceiverSocketId, io } = require("../socket/socket");
 const addNewPost = async (req, res) => {
   try {
     const { caption } = req.body;
@@ -77,6 +78,25 @@ const likePost = async (req, res) => {
     await post.updateOne({ $addToSet: { likes: likeKrneWalaUserKiId } });
     await post.save();
 
+    // implement socket io for real time notification
+    const user = await User.findById(likeKrneWalaUserKiId).select(
+      "username profilePicture"
+    );
+
+    const postOwnerId = post.author.toString();
+    if (postOwnerId !== likeKrneWalaUserKiId) {
+      // emit a notification event
+      const notification = {
+        type: "like",
+        userId: likeKrneWalaUserKiId,
+        userDetails: user,
+        postId,
+        message: "Your post was liked",
+      };
+      const postOwnerSocketId = getReceiverSocketId(postOwnerId);
+      io.to(postOwnerSocketId).emit("notification", notification);
+    }
+
     return res.status(200).json({ message: "Post liked", success: true });
   } catch (error) {
     console.log(error);
@@ -94,7 +114,23 @@ const dislikePost = async (req, res) => {
 
     await post.updateOne({ $pull: { likes: likeKrneWalaUserKiId } });
     await post.save();
-
+    // implement socket io for real time notification
+    const user = await User.findById(likeKrneWalaUserKiId).select(
+      "username profilePicture"
+    );
+    const postOwnerId = post.author.toString();
+    if (postOwnerId !== likeKrneWalaUserKiId) {
+      // emit a notification event
+      const notification = {
+        type: "dislike",
+        userId: likeKrneWalaUserKiId,
+        userDetails: user,
+        postId,
+        message: "Your post was disliked",
+      };
+      const postOwnerSocketId = getReceiverSocketId(postOwnerId);
+      io.to(postOwnerSocketId).emit("notification", notification);
+    }
     return res.status(200).json({ message: "Post disliked", success: true });
   } catch (error) {
     console.log(error);
@@ -194,19 +230,15 @@ const deletePost = async (req, res) => {
         .status(404)
         .json({ message: "Post not found", success: false });
 
-    // check if the logged-in user is the owner of the post
     if (post.author.toString() !== authorId)
       return res.status(403).json({ message: "Unauthorized" });
 
-    // delete post
     await Post.findByIdAndDelete(postId);
 
-    // remove the post id from the user's post
     let user = await User.findById(authorId);
     user.posts = user.posts.filter((id) => id.toString() !== postId);
     await user.save();
 
-    // delete associated comments
     await Comment.deleteMany({ post: postId });
 
     return res.status(200).json({
@@ -244,7 +276,7 @@ const bookmarkPost = async (req, res) => {
       await user.save();
       return res
         .status(200)
-        .json({ type: "saved", message: "Post bookmarked", success: true });
+        .json({ message: "Post bookmarked", success: true });
     }
   } catch (error) {
     console.log(error);

@@ -36,12 +36,12 @@ function SignIn() {
       if (data.success === false) {
         setLoading(false);
         setError(data.message);
-        console.log(data.message);
         return;
       }
 
       if (res.ok) {
         CustomToast("Login successfuly!");
+        console.log(data);
         dispatch(authUser(data));
         setTimeout(() => {
           setLoading(false);

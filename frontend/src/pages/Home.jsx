@@ -3,7 +3,7 @@ import Feeds from "../components/Feeds";
 import RightSidebar from "../components/RightSidebar";
 import { getPosts } from "../redux/post/postSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { authUser } from "../redux/user/userSlice";
+import { authUser, suggestedUsers } from "../redux/user/userSlice";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -36,12 +36,30 @@ export default function Home() {
     getAllPosts();
   }, [dispatch, currentUser]);
 
+  useEffect(() => {
+    const getAllSuggestedUsers = async () => {
+      try {
+        const res = await fetch("/api/user/suggested");
+        const data = await res.json();
+        if (res.ok) {
+          dispatch(suggestedUsers(data.users));
+        } else {
+          throw new Error("Failed to fetch users");
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+    getAllSuggestedUsers();
+  }, []);
+
   return (
     <div className="flex p-5">
       <div className="w-full">
         <Feeds />
       </div>
-      <div className="w-[600px]">
+      <div className="w-[600px] hidden lg:inline">
         <RightSidebar />
       </div>
     </div>

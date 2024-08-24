@@ -5,13 +5,15 @@ import { FaBorderNone, FaHeart, FaRegHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
 import SaveIcon from "../icons/save";
+import SavedIcon from "../icons/saved";
 import { DialogBox } from "./DialogBox";
 import { IoMdHeart } from "react-icons/io";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import { getPosts, selectedPost } from "../redux/post/postSlice";
+import { getPosts, setSelectedPost } from "../redux/post/postSlice";
 import CustomToast from "./CustomToast";
 import CommentBox from "./CommentBox";
+import { authUser } from "../redux/user/userSlice";
 const Post = ({ post }) => {
   const [openModal, setOpenModal] = useState(false);
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -20,8 +22,18 @@ const Post = ({ post }) => {
   const dispatch = useDispatch();
   const { posts } = useSelector((state) => state.post);
   const [liked, setLiked] = useState(
-    post.likes.includes(currentUser.user._id) || false
+    post.likes.includes(currentUser?.user?._id) || false
   );
+  // const [saved, setSaved] = useState(
+  //   currentUser?.user?.bookmarks.includes(post?._id) || false
+  // );
+  const [saved, setSaved] = useState(
+    currentUser?.user?.bookmarks.some(
+      (bookmark) => bookmark._id === post?._id
+    ) || false
+  );
+
+  console.log(saved);
   const [loading, setLoading] = useState(false);
   const [postComment, setPostComment] = useState([]);
 
@@ -83,6 +95,36 @@ const Post = ({ post }) => {
       setComment("");
     }
   };
+
+  const SaveOrUnsaveHandler = async (postId) => {
+    try {
+      const res = await fetch(`/api/post/${postId}/bookmark`);
+      if (res.ok) {
+        const data = await res.json();
+        setSaved(!saved);
+
+        console.log(saved, "current");
+        const updatedBookmarks = saved
+          ? currentUser.user.bookmarks.filter((post) => post._id !== postId)
+          : [...currentUser.user.bookmarks, post];
+
+        const updatedUserData = {
+          ...currentUser,
+          user: {
+            ...currentUser.user,
+            bookmarks: updatedBookmarks,
+          },
+        };
+
+        dispatch(authUser(updatedUserData));
+
+        CustomToast(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="max-w-[450px] mx-auto border-b-[1px] mb-4">
       <div className="flex justify-between mb-3">
@@ -116,8 +158,11 @@ const Post = ({ post }) => {
           )}
         </div>
       </div>
-      <div>
-        <img src={post.image} className="rounded" />
+      <div className=" w-full">
+        <img
+          src={post.image}
+          className="h-full w-full object-contain rounded"
+        />
       </div>
       <div className="flex justify-between my-4">
         <div className="flex justify-between gap-3">
@@ -125,17 +170,17 @@ const Post = ({ post }) => {
             <FaHeart
               className="text-[25px]"
               color="red"
-              onClick={() => LikeOrDisLikeHandler(post._id)}
+              onClick={() => LikeOrDisLikeHandler(post?._id)}
             />
           ) : (
             <FaRegHeart
               className="text-[25px]"
-              onClick={() => LikeOrDisLikeHandler(post._id)}
+              onClick={() => LikeOrDisLikeHandler(post?._id)}
             />
           )}
           <div
             onClick={() => {
-              dispatch(selectedPost(post));
+              dispatch(setSelectedPost(post));
               setShowCommentBox(true);
             }}
           >
@@ -148,8 +193,8 @@ const Post = ({ post }) => {
 
           <TbLocationShare className="text-[25px]" />
         </div>
-        <div>
-          <SaveIcon />
+        <div onClick={() => SaveOrUnsaveHandler(post._id)}>
+          {saved ? <SavedIcon /> : <SaveIcon />}
         </div>
       </div>
       <div>{post.likes.length} Likes</div>
@@ -157,7 +202,13 @@ const Post = ({ post }) => {
         <h1>{post?.author?.username}</h1>
         <p className="ml-2 text-[14px]">{post.caption}</p>
       </div>
-      <div className="text-sm my-1 text-gray-500 dark:text-gray-400">
+      <div
+        className="text-sm my-1 text-gray-500 dark:text-gray-400"
+        onClick={() => {
+          dispatch(selectedPost(post));
+          setShowCommentBox(true);
+        }}
+      >
         View all {postComment.length} comments
       </div>
       <div className="relative mt-3">

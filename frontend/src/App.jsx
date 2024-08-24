@@ -16,7 +16,38 @@ import PublicRoute from "./components/PublicRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "sonner";
+import EditProfille from "./pages/EditProfille";
+import { io } from "socket.io-client";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSocket } from "./redux/socket/socketSlice";
+import { setOnlineUsers } from "./redux/chat/chatSlice";
 export default function App() {
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { socket } = useSelector((state) => state.socket);
+  useEffect(() => {
+    if (currentUser?.user) {
+      const socket = io("http://localhost:8000", {
+        query: {
+          userId: currentUser?.user?._id,
+        },
+        transports: ["websocket"],
+      });
+      dispatch(setSocket(socket));
+      socket.on("getOnlineUsers", (onlineUsers) => {
+        console.log("getOnlineUsers", onlineUsers);
+        dispatch(setOnlineUsers(onlineUsers));
+      });
+      return () => {
+        socket.close();
+        dispatch(setSocket(null));
+      };
+    } else if (socket) {
+      socket?.close();
+      dispatch(setSocket(null));
+    }
+  }, [currentUser?.user, dispatch]);
   return (
     <BrowserRouter>
       <Routes>
@@ -82,10 +113,18 @@ export default function App() {
             }
           />
           <Route
-            path="/Profile"
+            path="/profile/:id"
             element={
               <LayoutWithSidebar>
                 <Profile />
+              </LayoutWithSidebar>
+            }
+          />
+          <Route
+            path="/edit-profile"
+            element={
+              <LayoutWithSidebar>
+                <EditProfille />
               </LayoutWithSidebar>
             }
           />
