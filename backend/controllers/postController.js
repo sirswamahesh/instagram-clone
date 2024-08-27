@@ -90,8 +90,10 @@ const likePost = async (req, res) => {
         type: "like",
         userId: likeKrneWalaUserKiId,
         userDetails: user,
-        postId,
+        post,
         message: "Your post was liked",
+        seen: false,
+        createdAt: new Date(z)
       };
       const postOwnerSocketId = getReceiverSocketId(postOwnerId);
       io.to(postOwnerSocketId).emit("notification", notification);
@@ -125,8 +127,10 @@ const dislikePost = async (req, res) => {
         type: "dislike",
         userId: likeKrneWalaUserKiId,
         userDetails: user,
-        postId,
+        post,
         message: "Your post was disliked",
+        seen: false,
+        createdAt: new Date()
       };
       const postOwnerSocketId = getReceiverSocketId(postOwnerId);
       io.to(postOwnerSocketId).emit("notification", notification);

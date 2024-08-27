@@ -27,6 +27,7 @@ const sendMessage = async (req, res) => {
 
     // implement socket io for real time data transfer
     const receiverSocketId = getReceiverSocketId(receiverId);
+    
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }

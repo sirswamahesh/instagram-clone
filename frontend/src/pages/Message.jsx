@@ -4,8 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMessages, setSelectedUser } from "../redux/chat/chatSlice";
 import MessageBox from "../components/MessageBox";
 import CustomToast from "../components/CustomToast";
+import { HiOutlineChatAlt2 } from "react-icons/hi";
+import { markAllMessageNotificationsAsSeen } from "../redux/notification/rtnSlice";
 const Messages = () => {
   const { currentUser, suggestedUsers } = useSelector((state) => state.user);
+  const {messageNotifications } = useSelector((state) => state.rtn);
   const { selectedUser, onlineUsers, messages } = useSelector(
     (state) => state.chat
   );
@@ -16,6 +19,8 @@ const Messages = () => {
   const handleSelectedUser = (user) => {
     dispatch(setSelectedUser(user));
   };
+
+ 
   const messageHandler = async () => {
     try {
       if (message) {
@@ -47,6 +52,8 @@ const Messages = () => {
     }
   };
 
+ 
+
   useEffect(() => {
     const fetchAllMessages = async () => {
       try {
@@ -61,10 +68,16 @@ const Messages = () => {
     };
     fetchAllMessages();
   }, [selectedUser]);
+  useEffect(()=>{
+    return ()=>{
+      dispatch(markAllMessageNotificationsAsSeen());
+      dispatch(setSelectedUser(null));
+    }
+  },[])
   return (
     <div className="flex w-full h-screen ">
       <div className="border w-[30%]">
-        <div className="p-4 border-b-2">
+        <div className=" border-b-2 flex p-4 h-[70px]">
           <div className="flex gap-3 ">
             <Avatar
               placeholderInitials="CN"
@@ -72,14 +85,14 @@ const Messages = () => {
               img={currentUser?.user?.profilePicture}
               rounded
             />
-            <div className="font-medium dark:text-white">
-              <div className="flex items-center gap-2">
-                <h1>{currentUser?.user?.username}</h1>
+            {/* <div className="font-medium dark:text-white"> */}
+              <div className="flex items-center gap-2 font-medium dark:text-white">
+                <h1 className="text-[18px]">{currentUser?.user?.username}</h1>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              {/* <p className="text-sm text-gray-500 dark:text-gray-400">
                 {currentUser?.user?.bio}
-              </p>
-            </div>
+              </p> */}
+            {/* </div> */}
           </div>
         </div>
         <h1 className="px-4 py-2">Messages</h1>
@@ -92,7 +105,7 @@ const Messages = () => {
               className="px-4 flex justify-between items-center group relative my-3 cursor-pointer"
               onClick={() => handleSelectedUser(user)}
             >
-              <div className="flex gap-3">
+              <div className="flex gap-3 items-start">
                 <Avatar
                   placeholder
                   Initials="CN"
@@ -110,6 +123,9 @@ const Messages = () => {
                     {isOnline ? "online" : "offline"}
                   </p>
                 </div>
+                <div className="flex items-center justify-end w-5 h-5 bg-red-600 rounded-full text-white">
+                 <p>3</p> 
+                </div>
               </div>
             </div>
           );
@@ -117,53 +133,60 @@ const Messages = () => {
       </div>
       <div className="border w-[70%] relative ">
         {selectedUser ? (
-          <div className="flex gap-3 border-b-2 px-4 py-2 h-[80px] items-center">
-            <Avatar
-              className="rounded-full object-cover text-3xl border-2"
-              // placeholderInitials="CN"
-              img={selectedUser?.profilePicture}
-              rounded
-              alt="Profile Picture"
-            />
-            <div className="font-medium dark:text-white ">
-              <h1 className="text-[18px]">{selectedUser?.username}</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {selectedUser?.bio}
-              </p>
+          <>
+            <div className="flex gap-3 border-b-2 px-4 py-2 items-center h-[70px]">
+              <Avatar
+                className="rounded-full object-cover text-3xl border-2"
+                // placeholderInitials="CN"
+                img={selectedUser?.profilePicture}
+                rounded
+                alt="Profile Picture"
+              />
+              <div className="font-medium dark:text-white ">
+                <h1 className="text-[18px]">{selectedUser?.username}</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {selectedUser?.bio}
+                </p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="">send message</div>
-        )}
-        <div>
-          <MessageBox selectedUser={selectedUser} />
-        </div>
-        <div>
-          <div className="absolute bottom-0 left-0 right-0 border-t-[1px] flex gap-4 p-3 mt-2 bg-white">
-            <input
-              placeholder="Send a message..."
-              className="border-0 focus:outline-none w-full"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              required
-            />
-            {message?.length > 0 && (
-              <button
-                className="text-blue-500 font-medium"
-                onClick={messageHandler}
-              >
-                {loading ? (
-                  <div className="flex gap-2">
-                    <Spinner size="sm" />
-                    <span className="pl-3">Loading...</span>
-                  </div>
-                ) : (
-                  "Send"
+            <div>
+              <MessageBox selectedUser={selectedUser} />
+            </div>
+            <div>
+              <div className="absolute bottom-0 left-0 right-0 border-t-[1px] flex gap-4 p-3 mt-2 bg-white">
+                <input
+                  placeholder="Send a message..."
+                  className="border-0 focus:outline-none w-full"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  required
+                />
+                {message?.length > 0 && (
+                  <button
+                    className="text-blue-500 font-medium"
+                    onClick={messageHandler}
+                  >
+                    {loading ? (
+                      <div className="flex gap-2">
+                        <Spinner size="sm" />
+                        <span className="pl-3">Loading...</span>
+                      </div>
+                    ) : (
+                      "Send"
+                    )}
+                  </button>
                 )}
-              </button>
-            )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="text-center flex flex-col items-center h-full justify-center">
+            <HiOutlineChatAlt2 className="text-6xl text-gray-400 mb-4" />
+            <button className="text-blue-500 font-medium text-lg">
+              Send Message
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -37,8 +37,8 @@ const RightSidebar = () => {
           Suggested users
         </h2>
         <div className="">
-          {suggestedUsers.map((user) => (
-            <Link to={`/profile/${user._id}`} key={user._id}>
+          {suggestedUsers?.map((user) => (
+            <Link to={`/profile/${user._id}`} key={user?._id}>
               <div className="flex justify-between items-center group relative my-3 cursor-pointer">
                 <div className="flex gap-3">
                   <Avatar

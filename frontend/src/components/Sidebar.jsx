@@ -1,4 +1,4 @@
-import { Avatar, Sidebar } from "flowbite-react";
+import { Avatar, Sidebar, Badge, Popover } from "flowbite-react";
 import {
   HiArrowSmRight,
   HiInbox,
@@ -32,6 +32,9 @@ import {
 import { getPosts } from "../redux/post/postSlice";
 import { useNavigate } from "react-router-dom";
 import CustomToast from "./CustomToast";
+import { setSelectedUser } from "../redux/chat/chatSlice";
+import { markAllNotificationsAsSeen } from "../redux/notification/rtnSlice"; // Import the new action
+
 export function SideBar() {
   const [openModal, setOpenModal] = useState(false);
   const CreatePostHandler = () => {
@@ -40,7 +43,17 @@ export function SideBar() {
   const navigation = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
-
+  const { likeNotifications } = useSelector((state) => state.rtn);
+  const { messageNotifications } = useSelector((state) => state.rtn);
+  console.log(messageNotifications.length);
+  // Filter for unseen notifications
+  const unseenNotifications = likeNotifications.filter(
+    (notification) => !notification.seen
+  );
+  const unSeenMsgNotifications = messageNotifications.filter(
+    (notification) => !notification.seen
+  );
+  console.log(unSeenMsgNotifications,"msg")
   const logoutHandler = async () => {
     const res = await fetch("/api/user/logout");
     const data = await res.json();
@@ -49,10 +62,13 @@ export function SideBar() {
       dispatch(getPosts([]));
       dispatch(suggestedUsers([]));
       dispatch(getUserProfile(null));
+      dispatch(setSelectedUser(null));
+
       CustomToast(data.message);
       navigation("/sign-in");
     }
   };
+
   return (
     <>
       <Sidebar className="min-h-screen border-r-2">
@@ -71,12 +87,73 @@ export function SideBar() {
             <Sidebar.Item as={Link} to="/reels" icon={HiUser}>
               Reels
             </Sidebar.Item>
-            <Sidebar.Item as={Link} to="/messages" icon={AiOutlineMessage}>
-              Messages
-            </Sidebar.Item>
-            <Sidebar.Item icon={FaRegHeart} as={Link} to="/notifications">
-              Notifications
-            </Sidebar.Item>
+            <div className="relative">
+              <Sidebar.Item as={Link} to="/messages" icon={AiOutlineMessage}>
+                Messages
+              </Sidebar.Item>
+              {unSeenMsgNotifications.length > 0 && (
+                <span className="absolute top-3 left-[-5px] inline-flex items-center justify-center w-5 h-5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                  {unSeenMsgNotifications.length}
+                </span>
+              )}
+            </div>
+            <Popover
+              content={
+                <div className="p-3 bg-white rounded-lg shadow-lg">
+                  <ul>
+                    {unseenNotifications.length > 0 ? (
+                      unseenNotifications.map((notification, index) => (
+                        <li
+                          key={index}
+                          className="text-sm text-gray-700 mb-2 flex items-center"
+                        >
+                          <img
+                            src={notification.userDetails.profilePicture}
+                            alt={`${notification.userName} profile`}
+                            className="w-8 h-8 rounded-full mr-2"
+                          />
+                          <div className="flex-1">
+                            <span className="font-bold">
+                              {notification?.userDetails?.username}
+                            </span>{" "}
+                            {notification.message}{" "}
+                            <span className="font-semibold">
+                              "{notification?.post?.caption}"
+                            </span>
+                          </div>
+                          {notification?.post?.image && (
+                            <img
+                              src={notification?.post?.image}
+                              alt={`${notification.post.caption}`}
+                              className="w-12 h-12 rounded-lg ml-2 object-cover"
+                            />
+                          )}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-sm text-gray-700">
+                        No notifications
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              }
+              trigger="hover"
+              placement="top"
+              onClick={() => dispatch(markAllNotificationsAsSeen())} // Mark notifications as seen when clicked
+            >
+              <div className="relative">
+                <Sidebar.Item icon={FaRegHeart} as={Link} to="/notifications">
+                  Notifications
+                </Sidebar.Item>
+                {unseenNotifications.length > 0 && (
+                  <span className="absolute top-3 left-[-5px] inline-flex items-center justify-center w-5 h-5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                    {unseenNotifications.length}
+                  </span>
+                )}
+              </div>
+            </Popover>
+
             <div onClick={CreatePostHandler}>
               <Sidebar.Item icon={FaRegSquarePlus}>Create</Sidebar.Item>
             </div>
@@ -84,7 +161,7 @@ export function SideBar() {
             <Sidebar.Item as={Link} to="/profile" icon={CgProfile}>
               Profile
             </Sidebar.Item>
-            <div onClick={logoutHandler} className=" cursor-pointer">
+            <div onClick={logoutHandler} className="cursor-pointer">
               <Sidebar.Item icon={RiLogoutCircleRLine}>Logout</Sidebar.Item>
             </div>
           </Sidebar.ItemGroup>

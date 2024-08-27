@@ -22,10 +22,16 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSocket } from "./redux/socket/socketSlice";
 import { setOnlineUsers } from "./redux/chat/chatSlice";
+import {
+  setLikeNotifications,
+  setMessageNotifications,
+} from "./redux/notification/rtnSlice";
 export default function App() {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { socket } = useSelector((state) => state.socket);
+
+  const { messageNotifications } = useSelector((state) => state.rtn);
   useEffect(() => {
     if (currentUser?.user) {
       const socket = io("http://localhost:8000", {
@@ -35,9 +41,16 @@ export default function App() {
         transports: ["websocket"],
       });
       dispatch(setSocket(socket));
+      socket.on("notification", (notification) => {
+        dispatch(setLikeNotifications(notification));
+      });
       socket.on("getOnlineUsers", (onlineUsers) => {
         console.log("getOnlineUsers", onlineUsers);
         dispatch(setOnlineUsers(onlineUsers));
+      });
+      
+      socket.on("newMessage", (newMessage) => {
+        dispatch(setMessageNotifications({ ...newMessage, seen: false }));
       });
       return () => {
         socket.close();

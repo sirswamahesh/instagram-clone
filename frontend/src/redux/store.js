@@ -3,6 +3,7 @@ import userReducer from "./user/userSlice";
 import postReducer from "./post/postSlice";
 import chatReducer from "./chat/chatSlice";
 import socketReducer from "./socket/socketSlice";
+import rtnReducer from "./notification/rtnSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   post: postReducer,
   chat: chatReducer,
   socket: socketReducer,
+  rtn:rtnReducer,
 });
 
 const persistConfig = {
