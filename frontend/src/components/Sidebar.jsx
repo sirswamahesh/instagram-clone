@@ -45,15 +45,17 @@ export function SideBar() {
   const { currentUser } = useSelector((state) => state.user);
   const { likeNotifications } = useSelector((state) => state.rtn);
   const { messageNotifications } = useSelector((state) => state.rtn);
-  console.log(messageNotifications.length);
-  // Filter for unseen notifications
+  const { followNotifications } = useSelector((state) => state.rtn);
   const unseenNotifications = likeNotifications.filter(
     (notification) => !notification.seen
   );
   const unSeenMsgNotifications = messageNotifications.filter(
     (notification) => !notification.seen
   );
-  console.log(unSeenMsgNotifications,"msg")
+  const unSeenFollowNotifications = followNotifications.filter(
+    (notification) => !notification.seen
+  );
+  console.log(unSeenFollowNotifications, "dkkkkkkkk");
   const logoutHandler = async () => {
     const res = await fetch("/api/user/logout");
     const data = await res.json();
@@ -101,33 +103,53 @@ export function SideBar() {
               content={
                 <div className="p-3 bg-white rounded-lg shadow-lg">
                   <ul>
-                    {unseenNotifications.length > 0 ? (
-                      unseenNotifications.map((notification, index) => (
+                    {unseenNotifications.length ||
+                    unSeenFollowNotifications.length > 0 ? (
+                      [
+                        ...unseenNotifications,
+                        ...unSeenFollowNotifications,
+                      ].map((notification, index) => (
                         <li
                           key={index}
                           className="text-sm text-gray-700 mb-2 flex items-center"
                         >
-                          <img
-                            src={notification.userDetails.profilePicture}
-                            alt={`${notification.userName} profile`}
+                          <Avatar
+                            img={
+                              notification.userDetails?.profilePicture ||
+                              notification.userProfile
+                            }
+                            alt={`${
+                              notification.userDetails?.username ||
+                              notification.username
+                            } profile`}
                             className="w-8 h-8 rounded-full mr-2"
+                            rounded
                           />
                           <div className="flex-1">
                             <span className="font-bold">
-                              {notification?.userDetails?.username}
+                              {notification?.userDetails?.username ||
+                                notification.username}
                             </span>{" "}
-                            {notification.message}{" "}
-                            <span className="font-semibold">
-                              "{notification?.post?.caption}"
-                            </span>
+                            {notification.username && (
+                              <span>started following you</span>
+                            )}
+                            {notification.type === "like" && (
+                              <span>
+                                {notification.message}
+                                <span className="font-semibold">
+                                  "{notification?.post?.caption}"
+                                </span>
+                              </span>
+                            )}
                           </div>
-                          {notification?.post?.image && (
-                            <img
-                              src={notification?.post?.image}
-                              alt={`${notification.post.caption}`}
-                              className="w-12 h-12 rounded-lg ml-2 object-cover"
-                            />
-                          )}
+                          {notification?.post?.image &&
+                            notification.type === "like" && (
+                              <img
+                                src={notification?.post?.image}
+                                alt={`${notification.post.caption}`}
+                                className="w-12 h-12 rounded-lg ml-2 object-cover"
+                              />
+                            )}
                         </li>
                       ))
                     ) : (
@@ -140,15 +162,17 @@ export function SideBar() {
               }
               trigger="hover"
               placement="top"
-              onClick={() => dispatch(markAllNotificationsAsSeen())} // Mark notifications as seen when clicked
+              onClick={() => dispatch(markAllNotificationsAsSeen())}
             >
               <div className="relative">
                 <Sidebar.Item icon={FaRegHeart} as={Link} to="/notifications">
                   Notifications
                 </Sidebar.Item>
-                {unseenNotifications.length > 0 && (
+                {(unseenNotifications.length > 0 ||
+                  unSeenFollowNotifications.length > 0) && (
                   <span className="absolute top-3 left-[-5px] inline-flex items-center justify-center w-5 h-5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                    {unseenNotifications.length}
+                    {unseenNotifications.length +
+                      unSeenFollowNotifications.length}
                   </span>
                 )}
               </div>

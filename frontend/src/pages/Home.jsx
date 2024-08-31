@@ -14,12 +14,10 @@ export default function Home() {
       try {
         const res = await fetch("/api/post/all");
         const data = await res.json();
-
         if (res.ok) {
           dispatch(getPosts(data.posts));
-
           const currentUserPosts = data.posts.filter(
-            (p) => p.author._id === currentUser?._id
+            (p) => p.author.id === currentUser?.id
           );
 
           if (currentUserPosts.length > 0) {
@@ -34,7 +32,7 @@ export default function Home() {
     };
 
     getAllPosts();
-  }, [dispatch, currentUser]);
+  }, [dispatch]);
 
   useEffect(() => {
     const getAllSuggestedUsers = async () => {

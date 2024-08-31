@@ -1,15 +1,19 @@
-import { Avatar, Button } from "flowbite-react";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { Avatar, Button, Spinner } from "flowbite-react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import { LuMessageCircle } from "react-icons/lu";
 import { BsThreeDots } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { authUser, getUserProfile } from "../redux/user/userSlice";
+import CustomToast from "./CustomToast";
 
 const UserProfile = () => {
   const { userProfile, currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("posts");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleTabChange = (tab) => {
     setTab(tab);
@@ -18,7 +22,48 @@ const UserProfile = () => {
   const renderPosts =
     tab === "posts" ? userProfile?.posts : userProfile?.bookmarks;
 
-  const user = currentUser?.user?._id === userProfile?._id;
+  const user = currentUser?.user?.id === userProfile?.id;
+
+  const isFollowing = currentUser.user.following.includes(userProfile?.id);
+  const isFollower = currentUser.user.followers.includes(userProfile?.id);
+  const handleFollowToggle = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/user/followOrUnfollow/${userProfile.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        CustomToast(data.message);
+        dispatch(
+          authUser({
+            ...currentUser,
+            user: {
+              ...currentUser.user,
+              following: isFollowing
+                ? currentUser.user.following.filter(
+                    (id) => id !== userProfile?.id
+                  )
+                : [...currentUser.user.following, userProfile?.id],
+            },
+          })
+        );
+        dispatch(
+          getUserProfile({
+            ...userProfile,
+            followers: isFollowing
+              ? userProfile.followers.filter((id) => id !== currentUser.user.id)
+              : [...userProfile.followers, currentUser.user.id],
+          })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full p-4">
       <div className="flex items-start gap-14 justify-center">
@@ -53,8 +98,28 @@ const UserProfile = () => {
               </>
             ) : (
               <>
-                {" "}
-                <Button className="bg-slate-400 text-slate-200">Follow</Button>
+                <Button
+                  size="sm"
+                  color="light"
+                  onClick={handleFollowToggle}
+                  style={{
+                    boxShadow: "none",
+                  }}
+                  className="hover:shadow-none"
+                >
+                  {loading ? (
+                    <>
+                      <Spinner size="sm" />
+                      <span className="pl-3">Loading...</span>
+                    </>
+                  ) : isFollowing ? (
+                    "Following"
+                  ) : isFollower ? (
+                    "Follow back"
+                  ) : (
+                    "Follow"
+                  )}
+                </Button>
                 <BsThreeDots size={30} />
               </>
             )}
@@ -91,12 +156,15 @@ const UserProfile = () => {
           >
             POSTS
           </p>
-          <p
-            className={tab === "saved" ? "font-semibold" : ""}
-            onClick={() => handleTabChange("saved")}
-          >
-            SAVED
-          </p>
+          {user && (
+            <p
+              className={tab === "saved" ? "font-semibold" : ""}
+              onClick={() => handleTabChange("saved")}
+            >
+              SAVED
+            </p>
+          )}
+
           <p>TAGGED</p>
         </div>
         {renderPosts?.length === 0 ? (
@@ -105,7 +173,7 @@ const UserProfile = () => {
           <div className="grid grid-cols-3 gap-2">
             {renderPosts?.map((post) => (
               <div
-                key={post?._id}
+                key={post?.id}
                 className="relative h-[300px] w-[300px] border group"
               >
                 <img

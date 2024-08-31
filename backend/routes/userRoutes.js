@@ -1,16 +1,15 @@
 const express = require("express");
 const {
-  editProfile,
-  followOrUnfollow,
-  getProfile,
-  getSuggestedUsers,
+  register,
   login,
   logout,
-  register,
-} = require("../controllers/userController");
-const isAuthenticated = require("../middlewares/isAuthenticated");
-const upload = require("../middlewares/multer");
-
+  getProfile,
+  editProfile,
+  getSuggestedUsers,
+  followOrUnfollow,
+} = require("../controllers/userControllers");
+const isAuthenticated = require("../utils/isAuthenticated");
+const upload = require("../utils/multer");
 const router = express.Router();
 
 router.post("/register", register);
@@ -23,7 +22,8 @@ router.post(
   upload.single("profilePicture"),
   editProfile
 );
+
 router.get("/suggested", isAuthenticated, getSuggestedUsers);
-router.post("/followorunfollow/:id", isAuthenticated, followOrUnfollow);
+router.get("/followOrUnfollow/:id", isAuthenticated, followOrUnfollow);
 
 module.exports = router;

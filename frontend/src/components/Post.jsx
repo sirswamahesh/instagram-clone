@@ -22,18 +22,13 @@ const Post = ({ post }) => {
   const dispatch = useDispatch();
   const { posts } = useSelector((state) => state.post);
   const [liked, setLiked] = useState(
-    post.likes.includes(currentUser?.user?._id) || false
+    post?.likes?.includes(currentUser?.user?.id) || false
   );
-  // const [saved, setSaved] = useState(
-  //   currentUser?.user?.bookmarks.includes(post?._id) || false
-  // );
   const [saved, setSaved] = useState(
-    currentUser?.user?.bookmarks.some(
-      (bookmark) => bookmark._id === post?._id
-    ) || false
+    currentUser?.user?.bookmarks.some((bookmark) => bookmark.id === post?.id) ||
+      false
   );
 
-  console.log(saved);
   const [loading, setLoading] = useState(false);
   const [postComment, setPostComment] = useState([]);
 
@@ -51,12 +46,12 @@ const Post = ({ post }) => {
 
         // Update the post in the Redux state
         const updatedPostData = posts.map((p) =>
-          p._id === postId
+          p.id === postId
             ? {
                 ...p,
                 likes: liked
-                  ? p.likes.filter((id) => id !== currentUser.user._id)
-                  : [...p.likes, currentUser.user._id],
+                  ? p.likes.filter((id) => id !== currentUser.user.id)
+                  : [...p.likes, currentUser.user.id],
               }
             : p
         );
@@ -84,7 +79,7 @@ const Post = ({ post }) => {
       setPostComment(updatedCommentData);
 
       const updatedPostData = posts.map((p) =>
-        p._id === postId
+        p.id === postId
           ? {
               ...p,
               comments: [...p.comments, data.comment],
@@ -105,7 +100,7 @@ const Post = ({ post }) => {
 
         console.log(saved, "current");
         const updatedBookmarks = saved
-          ? currentUser.user.bookmarks.filter((post) => post._id !== postId)
+          ? currentUser.user.bookmarks.filter((post) => post.id !== postId)
           : [...currentUser.user.bookmarks, post];
 
         const updatedUserData = {
@@ -170,12 +165,12 @@ const Post = ({ post }) => {
             <FaHeart
               className="text-[25px]"
               color="red"
-              onClick={() => LikeOrDisLikeHandler(post?._id)}
+              onClick={() => LikeOrDisLikeHandler(post?.id)}
             />
           ) : (
             <FaRegHeart
               className="text-[25px]"
-              onClick={() => LikeOrDisLikeHandler(post?._id)}
+              onClick={() => LikeOrDisLikeHandler(post?.id)}
             />
           )}
           <div
@@ -193,7 +188,7 @@ const Post = ({ post }) => {
 
           <TbLocationShare className="text-[25px]" />
         </div>
-        <div onClick={() => SaveOrUnsaveHandler(post._id)}>
+        <div onClick={() => SaveOrUnsaveHandler(post.id)}>
           {saved ? <SavedIcon /> : <SaveIcon />}
         </div>
       </div>
@@ -222,7 +217,7 @@ const Post = ({ post }) => {
         />
         {comment.length > 0 && (
           <button
-            onClick={() => CommentHandler(post._id)}
+            onClick={() => CommentHandler(post.id)}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 font-medium"
           >
             {loading ? (

@@ -16,15 +16,15 @@ export function DialogBox({ openModal, setOpenModal, post }) {
   const deletePostHandler = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/post/delete/${post._id}`, {
+      const res = await fetch(`/api/post/delete/${post.id}`, {
         method: "DELETE",
       });
       const data = await res.json();
       if (res.ok) {
-        const updatedPosts = posts.filter((p) => p._id !== post._id);
+        const updatedPosts = posts.filter((p) => p.id !== post.id);
         dispatch(getPosts(updatedPosts));
         const currentUserPosts = posts.filter(
-          (p) => p.author._id === currentUser?._id
+          (p) => p.author.id === currentUser?.id
         );
 
         if (currentUserPosts.length > 0) {
@@ -62,7 +62,7 @@ export function DialogBox({ openModal, setOpenModal, post }) {
               <>
                 <p className="my-5 text-md text-red-800">Report</p>
                 <hr className="border-gray-300 mb-5" />
-                {currentUser.user._id !== post.author._id && (
+                {currentUser.user.id !== post.author.id && (
                   <>
                     {" "}
                     <p className="mb-5 text-md text-red-800">Unfollow</p>
@@ -73,7 +73,7 @@ export function DialogBox({ openModal, setOpenModal, post }) {
                 <p className="mb-5 text-md text-gray-800">Add to favourites</p>
                 <hr className="border-gray-300 mb-5" />
 
-                {currentUser.user._id === post.author._id && (
+                {currentUser.user.id === post.author.id && (
                   <>
                     <p
                       className="mb-5 text-md text-gray-800 cursor-pointer"

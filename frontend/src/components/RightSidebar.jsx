@@ -8,7 +8,7 @@ const RightSidebar = () => {
   const { currentUser, suggestedUsers } = useSelector((state) => state.user);
   return (
     <>
-      <Link to={`/profile/${currentUser?.user?._id}`}>
+      <Link to={`/profile/${currentUser?.user?.id}`}>
         <div className="flex justify-between items-center group cursor-pointer">
           <div className="flex gap-3">
             <Avatar
@@ -38,7 +38,7 @@ const RightSidebar = () => {
         </h2>
         <div className="">
           {suggestedUsers?.map((user) => (
-            <Link to={`/profile/${user._id}`} key={user?._id}>
+            <Link to={`/profile/${user.id}`} key={user?.id}>
               <div className="flex justify-between items-center group relative my-3 cursor-pointer">
                 <div className="flex gap-3">
                   <Avatar

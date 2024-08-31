@@ -17,7 +17,7 @@ const CommentBox = ({ showCommentBox, setShowCommentBox }) => {
   }, [selectedPost]);
   const CommentHandler = async () => {
     setLoading(true);
-    const res = await fetch(`/api/post/${selectedPost._id}/comment`, {
+    const res = await fetch(`/api/post/${selectedPost.id}/comment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +32,7 @@ const CommentBox = ({ showCommentBox, setShowCommentBox }) => {
       setPostComment(updatedCommentData);
 
       const updatedPostData = posts.map((p) =>
-        p._id === selectedPost._id
+        p.id === selectedPost.id
           ? {
               ...p,
               comments: [...p.comments, data.comment],

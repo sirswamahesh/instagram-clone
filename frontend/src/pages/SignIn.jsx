@@ -41,7 +41,6 @@ function SignIn() {
 
       if (res.ok) {
         CustomToast("Login successfuly!");
-        console.log(data);
         dispatch(authUser(data));
         setTimeout(() => {
           setLoading(false);

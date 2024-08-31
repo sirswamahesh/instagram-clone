@@ -29,7 +29,7 @@ const MessageBox = ({ selectedUser }) => {
           <h1 className="text-3xl font-medium dark:text-white pb-4">
             {selectedUser?.username}
           </h1>
-          <Link to={`/profile/${selectedUser?._id}`}>
+          <Link to={`/profile/${selectedUser?.id}`}>
             <Button size="xs" color="light" className="w-[150px]">
               View profile
             </Button>
@@ -40,9 +40,9 @@ const MessageBox = ({ selectedUser }) => {
         {messages &&
           messages.map((msg) => (
             <p
-              key={msg._id}
+              key={msg.id}
               className={`p-2 rounded-lg shadow-md max-w-full w-max ${
-                msg.senderId === currentUser?.user?._id
+                msg.senderId === currentUser?.user?.id
                   ? "bg-blue-500 text-white self-end"
                   : "bg-white text-black self-start"
               }`}

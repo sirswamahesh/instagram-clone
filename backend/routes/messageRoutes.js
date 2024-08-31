@@ -1,7 +1,6 @@
 const express = require("express");
-const isAuthenticated = require("../middlewares/isAuthenticated");
-const upload = require("../middlewares/multer");
 const { getMessage, sendMessage } = require("../controllers/messageController");
+const isAuthenticated = require("../utils/isAuthenticated");
 
 const router = express.Router();
 

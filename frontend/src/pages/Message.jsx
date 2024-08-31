@@ -8,7 +8,7 @@ import { HiOutlineChatAlt2 } from "react-icons/hi";
 import { markAllMessageNotificationsAsSeen } from "../redux/notification/rtnSlice";
 const Messages = () => {
   const { currentUser, suggestedUsers } = useSelector((state) => state.user);
-  const {messageNotifications } = useSelector((state) => state.rtn);
+  const { messageNotifications } = useSelector((state) => state.rtn);
   const { selectedUser, onlineUsers, messages } = useSelector(
     (state) => state.chat
   );
@@ -20,12 +20,11 @@ const Messages = () => {
     dispatch(setSelectedUser(user));
   };
 
- 
   const messageHandler = async () => {
     try {
       if (message) {
         setLoading(true);
-        const res = await fetch(`/api/message/send/${selectedUser._id}`, {
+        const res = await fetch(`/api/message/send/${selectedUser.id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -34,7 +33,6 @@ const Messages = () => {
         });
 
         const data = await res.json();
-        console.log(data);
         if (res.ok) {
           const updatedMessages = [...messages, data.newMessage];
           dispatch(setMessages(updatedMessages));
@@ -52,12 +50,10 @@ const Messages = () => {
     }
   };
 
- 
-
   useEffect(() => {
     const fetchAllMessages = async () => {
       try {
-        const res = await fetch(`/api/message/all/${selectedUser?._id}`);
+        const res = await fetch(`/api/message/all/${selectedUser?.id}`);
         const data = await res.json();
         if (res.ok) {
           dispatch(setMessages(data.messages));
@@ -68,12 +64,12 @@ const Messages = () => {
     };
     fetchAllMessages();
   }, [selectedUser]);
-  useEffect(()=>{
-    return ()=>{
+  useEffect(() => {
+    return () => {
       dispatch(markAllMessageNotificationsAsSeen());
       dispatch(setSelectedUser(null));
-    }
-  },[])
+    };
+  }, []);
   return (
     <div className="flex w-full h-screen ">
       <div className="border w-[30%]">
@@ -86,10 +82,10 @@ const Messages = () => {
               rounded
             />
             {/* <div className="font-medium dark:text-white"> */}
-              <div className="flex items-center gap-2 font-medium dark:text-white">
-                <h1 className="text-[18px]">{currentUser?.user?.username}</h1>
-              </div>
-              {/* <p className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2 font-medium dark:text-white">
+              <h1 className="text-[18px]">{currentUser?.user?.username}</h1>
+            </div>
+            {/* <p className="text-sm text-gray-500 dark:text-gray-400">
                 {currentUser?.user?.bio}
               </p> */}
             {/* </div> */}
@@ -98,10 +94,10 @@ const Messages = () => {
         <h1 className="px-4 py-2">Messages</h1>
 
         {suggestedUsers.map((user) => {
-          const isOnline = onlineUsers.includes(user._id);
+          const isOnline = onlineUsers.includes(user.id);
           return (
             <div
-              key={user._id}
+              key={user.id}
               className="px-4 flex justify-between items-center group relative my-3 cursor-pointer"
               onClick={() => handleSelectedUser(user)}
             >
@@ -122,9 +118,6 @@ const Messages = () => {
                   >
                     {isOnline ? "online" : "offline"}
                   </p>
-                </div>
-                <div className="flex items-center justify-end w-5 h-5 bg-red-600 rounded-full text-white">
-                 <p>3</p> 
                 </div>
               </div>
             </div>

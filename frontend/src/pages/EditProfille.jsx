@@ -57,7 +57,7 @@ const EditProfile = () => {
         dispatch(authUser(updatedUserData));
         CustomToast(data.message);
         setTimeout(() => {
-          navigation(`/profile/${currentUser?.user?._id}`);
+          navigation(`/profile/${currentUser?.user?.id}`);
         }, 3000);
       }
     } catch (error) {

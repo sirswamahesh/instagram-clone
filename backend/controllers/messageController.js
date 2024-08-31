@@ -1,6 +1,6 @@
-const Conversation = require("../models/conversationModel");
-const Message = require("../models/messageModel");
-const { getReceiverSocketId, io } = require("../socket/socket");
+const { Sequelize } = require("sequelize");
+const db = require("../models");
+const { getReceiverSocketId, io } = require("../app");
 
 const sendMessage = async (req, res) => {
   try {
@@ -8,26 +8,27 @@ const sendMessage = async (req, res) => {
     const receiverId = req.params.id;
     const { message } = req.body;
 
-    let conversation = await Conversation.findOne({
-      participants: { $all: [senderId, receiverId] },
+    let conversation = await db.Conversation.findOne({
+      where: {
+        participants: { [Sequelize.Op.contains]: [senderId, receiverId] },
+      },
     });
     if (!conversation) {
-      conversation = await Conversation.create({
+      conversation = await db.Conversation.create({
         participants: [senderId, receiverId],
       });
     }
-    const newMessage = await Message.create({
+
+    const newMessage = await db.Message.create({
       senderId,
       receiverId,
       message,
+      conversationId: conversation.id,
     });
-    if (newMessage) conversation.messages.push(newMessage._id);
-
-    await Promise.all([conversation.save(), newMessage.save()]);
 
     // implement socket io for real time data transfer
     const receiverSocketId = getReceiverSocketId(receiverId);
-    
+
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
@@ -36,7 +37,11 @@ const sendMessage = async (req, res) => {
       newMessage,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while sending the message.",
+    });
   }
 };
 
@@ -44,15 +49,25 @@ const getMessage = async (req, res) => {
   try {
     const senderId = req.id;
     const receiverId = req.params.id;
-    const conversation = await Conversation.findOne({
-      participants: { $all: [senderId, receiverId] },
-    }).populate("messages");
+    const conversation = await db.Conversation.findOne({
+      where: {
+        participants: { [Sequelize.Op.contains]: [senderId, receiverId] },
+      },
+      attributes: { exclude: ["participants", "id", "createdAt", "updatedAt"] },
+      include: [
+        {
+          model: db.Message,
+          as: "messages",
+          order: [["createdAt", "ASC"]],
+        },
+      ],
+    });
     if (!conversation)
-      return res.status(200).json({ success: true, messages: [] });
+      return res.status(200).json({ success: false, messages: "" });
 
     return res
       .status(200)
-      .json({ success: true, messages: conversation?.messages });
+      .json({ success: true, messages: conversation.messages });
   } catch (error) {
     console.log(error);
   }
