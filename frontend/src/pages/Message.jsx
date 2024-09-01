@@ -13,6 +13,7 @@ const Messages = () => {
     (state) => state.chat
   );
 
+  const unReadMsg = messageNotifications.filter((msg) => msg.seen == false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -20,7 +21,8 @@ const Messages = () => {
     dispatch(setSelectedUser(user));
   };
 
-  const messageHandler = async () => {
+  const messageHandler = async (e) => {
+    e.preventDefault();
     try {
       if (message) {
         setLoading(true);
@@ -81,20 +83,17 @@ const Messages = () => {
               img={currentUser?.user?.profilePicture}
               rounded
             />
-            {/* <div className="font-medium dark:text-white"> */}
+
             <div className="flex items-center gap-2 font-medium dark:text-white">
               <h1 className="text-[18px]">{currentUser?.user?.username}</h1>
             </div>
-            {/* <p className="text-sm text-gray-500 dark:text-gray-400">
-                {currentUser?.user?.bio}
-              </p> */}
-            {/* </div> */}
           </div>
         </div>
         <h1 className="px-4 py-2">Messages</h1>
 
         {suggestedUsers.map((user) => {
           const isOnline = onlineUsers.includes(user.id);
+          const unRead = unReadMsg.filter((msg) => msg.senderId === user.id);
           return (
             <div
               key={user.id}
@@ -108,15 +107,13 @@ const Messages = () => {
                   img={user?.profilePicture}
                   className="object-cover"
                   rounded
+                  status={`${isOnline && "online"}`}
+                  statusPosition="bottom-right"
                 />
                 <div className="font-medium dark:text-white">
                   <h1>{user?.username}</h1>
-                  <p
-                    className={`text-xs font-bold ${
-                      isOnline ? "text-yellow-500" : "text-red-600"
-                    } `}
-                  >
-                    {isOnline ? "online" : "offline"}
+                  <p className={`text-xs font-bold text-green-600`}>
+                    {unRead.length > 0 && `${unRead.length} new messagees`}
                   </p>
                 </div>
               </div>
@@ -146,7 +143,10 @@ const Messages = () => {
               <MessageBox selectedUser={selectedUser} />
             </div>
             <div>
-              <div className="absolute bottom-0 left-0 right-0 border-t-[1px] flex gap-4 p-3 mt-2 bg-white">
+              <form
+                onSubmit={messageHandler}
+                className="absolute bottom-0 left-0 right-0 border-t-[1px] flex gap-4 p-3 mt-2 bg-white"
+              >
                 <input
                   placeholder="Send a message..."
                   className="border-0 focus:outline-none w-full"
@@ -155,10 +155,7 @@ const Messages = () => {
                   required
                 />
                 {message?.length > 0 && (
-                  <button
-                    className="text-blue-500 font-medium"
-                    onClick={messageHandler}
-                  >
+                  <button className="text-blue-500 font-medium" type="submit">
                     {loading ? (
                       <div className="flex gap-2">
                         <Spinner size="sm" />
@@ -169,7 +166,7 @@ const Messages = () => {
                     )}
                   </button>
                 )}
-              </div>
+              </form>
             </div>
           </>
         ) : (

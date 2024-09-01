@@ -12,13 +12,14 @@ const rootReducer = combineReducers({
   post: postReducer,
   chat: chatReducer,
   socket: socketReducer,
-  rtn:rtnReducer,
+  rtn: rtnReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
   version: 1,
+  blacklist: ["socket"],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

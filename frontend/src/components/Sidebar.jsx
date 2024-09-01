@@ -134,12 +134,7 @@ export function SideBar() {
                               <span>started following you</span>
                             )}
                             {notification.type === "like" && (
-                              <span>
-                                {notification.message}
-                                <span className="font-semibold">
-                                  "{notification?.post?.caption}"
-                                </span>
-                              </span>
+                              <span>{notification.message}</span>
                             )}
                           </div>
                           {notification?.post?.image &&
