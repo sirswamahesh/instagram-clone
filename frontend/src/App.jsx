@@ -10,7 +10,7 @@ import Profile from "./pages/Profile";
 import CreatePost from "./pages/CreatePost";
 import Notifications from "./pages/Notifications";
 import Messages from "./pages/Message";
-import Setting from "./pages/Setting";
+import Setting from "./pages/Settings";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { ToastContainer } from "react-toastify";
@@ -143,7 +143,7 @@ export default function App() {
             }
           />
           <Route
-            path="/setting"
+            path="/settings"
             element={
               <LayoutWithSidebar>
                 <Setting />

@@ -15,7 +15,7 @@ const MessageBox = ({ selectedUser }) => {
   }, [messages]);
 
   return (
-    <div className="pt-3 overflow-y-scroll h-[485px] bg-gray-100">
+    <div className="pt-3 overflow-y-scroll h-[485px] dark:bg-gray-800 bg-gray-100">
       <div className="w-full flex flex-col justify-center items-center">
         <Avatar
           className="rounded-full object-cover text-3xl border-2"

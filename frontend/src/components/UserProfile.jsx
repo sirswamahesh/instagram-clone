@@ -67,17 +67,15 @@ const UserProfile = () => {
   return (
     <div className="min-h-screen w-full p-4">
       <div className="flex items-start gap-14 justify-center">
-        <div>
-          <Avatar
-            placeholderInitials="CN"
-            className="object-cover text-3xl"
-            img={userProfile?.profilePicture}
-            rounded
-            alt="Profile Picture"
-            size="xl"
-            shadow="md"
-          />
-        </div>
+        <Avatar
+          placeholderInitials="CN"
+          className="object-cover text-3xl"
+          img={userProfile?.profilePicture}
+          rounded
+          alt="Profile Picture"
+          size="xl"
+          shadow="md"
+        />
 
         <div className="flex flex-col gap-7">
           <div className="flex gap-5 items-center">
@@ -147,7 +145,7 @@ const UserProfile = () => {
           <div>{userProfile?.bio}</div>
         </div>
       </div>
-      <hr className="m-10" />
+      <hr className="m-10 bg-slate-950 " />
       <div className="flex justify-center items-center flex-col">
         <div className="flex gap-40 mb-5">
           <p

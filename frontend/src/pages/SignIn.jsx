@@ -54,7 +54,7 @@ function SignIn() {
   };
   return (
     <>
-      <div className="min-h-screen mt-20">
+      <div className="min-h-screen pt-20">
         <div className="max-w-[400px] mx-auto flex-col md:flex-row md:items-center gap-5 border border-1 p-5 rounded-lg">
           <div className="flex-1">
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>

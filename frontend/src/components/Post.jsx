@@ -206,10 +206,10 @@ const Post = ({ post }) => {
       >
         View all {postComment.length} comments
       </div>
-      <div className="relative mt-3">
+      <div className="relative mt-3 dark:bg-slate-900">
         <input
           placeholder="Add a comment..."
-          className="border-0 focus:outline-none focus:border-none w-full pr-12"
+          className="border-0 focus:outline-none focus:border-none w-full pr-12  dark:bg-slate-800"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           required

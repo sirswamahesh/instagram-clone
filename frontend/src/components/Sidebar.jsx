@@ -14,6 +14,7 @@ import {
   IoHomeOutline,
   IoSearchSharp,
   IoReorderThreeSharp,
+  IoSettingsOutline,
 } from "react-icons/io5";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 
@@ -55,24 +56,10 @@ export function SideBar() {
   const unSeenFollowNotifications = followNotifications.filter(
     (notification) => !notification.seen
   );
-  const logoutHandler = async () => {
-    const res = await fetch("/api/user/logout");
-    const data = await res.json();
-    if (data.success) {
-      dispatch(authUser(null));
-      dispatch(getPosts([]));
-      dispatch(suggestedUsers([]));
-      dispatch(getUserProfile(null));
-      dispatch(setSelectedUser(null));
-
-      CustomToast(data.message);
-      navigation("/sign-in");
-    }
-  };
 
   return (
     <>
-      <Sidebar className="min-h-screen border-r-2">
+      <Sidebar className="min-h-screen border-r-[1px] dark:border-slate-900">
         <Sidebar.Logo href="#">Instagram</Sidebar.Logo>
         <Sidebar.Items>
           <Sidebar.ItemGroup className="flex flex-col gap-3">
@@ -179,9 +166,12 @@ export function SideBar() {
             <Sidebar.Item as={Link} to="/profile" icon={CgProfile}>
               Profile
             </Sidebar.Item>
-            <div onClick={logoutHandler} className="cursor-pointer">
+            <Sidebar.Item as={Link} to="/settings" icon={IoSettingsOutline}>
+              Settings
+            </Sidebar.Item>
+            {/* <div onClick={logoutHandler} className="cursor-pointer">
               <Sidebar.Item icon={RiLogoutCircleRLine}>Logout</Sidebar.Item>
-            </div>
+            </div> */}
           </Sidebar.ItemGroup>
         </Sidebar.Items>
       </Sidebar>

@@ -73,7 +73,7 @@ const EditProfile = () => {
       <div className="border max-w-3xl w-full p-5">
         <h1 className="font-semibold mb-5 text-[20px]">Edit Profile</h1>
         <form onSubmit={submitHandler}>
-          <div className="flex justify-between items-center p-5 bg-slate-200 rounded-md">
+          <div className="flex justify-between items-center p-5 bg-slate-200 dark:bg-slate-700 rounded-md">
             <div className="flex gap-3">
               <Avatar
                 placeholderInitials="CN"

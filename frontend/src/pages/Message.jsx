@@ -97,8 +97,12 @@ const Messages = () => {
   return (
     <div className="flex w-full h-screen">
       {!selectedUser || !isMobile ? (
-        <div className={`border ${isMobile ? "w-full" : "w-[30%]"} sm:inline`}>
-          <div className="border-b-2 flex p-4 h-[70px]">
+        <div
+          className={`border dark:border-black ${
+            isMobile ? "w-full" : "w-[30%]"
+          } sm:inline`}
+        >
+          <div className="border-b-[1px]  dark:border-black  flex p-4 h-[70px]">
             <div className="flex gap-3 items-center">
               <div onClick={() => navigation("/")}>
                 <IoMdArrowBack size={20} />
@@ -146,12 +150,11 @@ const Messages = () => {
         </div>
       ) : null}
 
-      {/* Chat Box */}
       {(selectedUser && isMobile) || !isMobile ? (
-        <div className="border sm:w-[70%] relative w-full">
+        <div className=" dark:border-slate-900  sm:w-[70%] relative w-full">
           {selectedUser ? (
             <>
-              <div className="flex gap-3 border-b-2 px-4 py-2 items-center h-[70px]">
+              <div className="flex gap-3 border-b-[1px] dark:border-slate-900  px-4 py-2 items-center h-[70px]">
                 {isMobile && selectedUser && (
                   <div onClick={handleBackToSuggestedUsers}>
                     <IoMdArrowBack size={20} />
@@ -176,11 +179,11 @@ const Messages = () => {
               <div>
                 <form
                   onSubmit={messageHandler}
-                  className="absolute bottom-0 left-0 right-0 border-t-[1px] flex gap-4 p-3 mt-2 bg-white"
+                  className="absolute bottom-0 left-0 right-0 border-t-[1px] dark:border-slate-900 flex gap-4 p-3 mt-2 "
                 >
                   <input
                     placeholder="Send a message..."
-                    className="border-0 focus:outline-none w-full"
+                    className="border-0 focus:outline-none w-full dark:text-black dark:bg-slate-800"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
