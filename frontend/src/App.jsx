@@ -31,8 +31,6 @@ export default function App() {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { socket } = useSelector((state) => state.socket);
-
-  const { messageNotifications } = useSelector((state) => state.rtn);
   useEffect(() => {
     if (currentUser?.user) {
       const socket = io("http://localhost:3000", {
@@ -46,7 +44,6 @@ export default function App() {
         dispatch(setLikeNotifications(notification));
       });
       socket.on("getOnlineUsers", (onlineUsers) => {
-        console.log("getOnlineUsers", onlineUsers);
         dispatch(setOnlineUsers(onlineUsers));
       });
 
@@ -54,7 +51,6 @@ export default function App() {
         dispatch(setMessageNotifications({ ...newMessage, seen: false }));
       });
       socket.on("followNotifaction", (followNotification) => {
-        console.log("hhhhhhh", followNotification);
         dispatch(setFollowNotifications(followNotification));
       });
       return () => {

@@ -55,7 +55,6 @@ export function SideBar() {
   const unSeenFollowNotifications = followNotifications.filter(
     (notification) => !notification.seen
   );
-  console.log(unSeenFollowNotifications, "dkkkkkkkk");
   const logoutHandler = async () => {
     const res = await fetch("/api/user/logout");
     const data = await res.json();
