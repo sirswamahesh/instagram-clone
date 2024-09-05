@@ -99,7 +99,7 @@ const Messages = () => {
       {!selectedUser || !isMobile ? (
         <div
           className={`border dark:border-black ${
-            isMobile ? "w-full" : "w-[30%]"
+            isMobile ? "w-full" : "w-[35%]"
           } sm:inline`}
         >
           <div className="border-b-[1px]  dark:border-black  flex p-4 h-[70px]">
@@ -151,7 +151,7 @@ const Messages = () => {
       ) : null}
 
       {(selectedUser && isMobile) || !isMobile ? (
-        <div className=" dark:border-slate-900  sm:w-[70%] relative w-full">
+        <div className=" dark:border-slate-900  sm:w-[65%] relative w-full">
           {selectedUser ? (
             <>
               <div className="flex gap-3 border-b-[1px] dark:border-slate-900  px-4 py-2 items-center h-[70px]">

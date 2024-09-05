@@ -7,7 +7,6 @@ import { TbLocationShare } from "react-icons/tb";
 import SaveIcon from "../icons/save";
 import SavedIcon from "../icons/saved";
 import { DialogBox } from "./DialogBox";
-import { IoMdHeart } from "react-icons/io";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { getPosts, setSelectedPost } from "../redux/post/postSlice";
@@ -153,11 +152,8 @@ const Post = ({ post }) => {
           )}
         </div>
       </div>
-      <div className=" w-full">
-        <img
-          src={post.image}
-          className="h-full w-full object-contain rounded"
-        />
+      <div className="w-full h-[438px]">
+        <img src={post.image} className="h-full w-full object-cover rounded" />
       </div>
       <div className="flex justify-between my-4">
         <div className="flex justify-between gap-3">

@@ -41,9 +41,9 @@ const MessageBox = ({ selectedUser }) => {
           messages.map((msg) => (
             <p
               key={msg.id}
-              className={`p-2 rounded-lg shadow-md max-w-full w-max ${
+              className={`p-2  rounded-lg shadow-md max-w-full w-max ${
                 msg.senderId === currentUser?.user?.id
-                  ? "bg-blue-500 text-white self-end"
+                  ? "bg-blue-500 text-white self-end dark:text-white dark:bg-stone-950"
                   : "bg-white text-black self-start"
               }`}
             >

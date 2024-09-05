@@ -10,6 +10,8 @@ export default defineConfig({
         secure: false,
       },
     },
+    host: "0.0.0.0", // Allows access from other devices on the network
+    port: 5173,
   },
   plugins: [react()],
 });

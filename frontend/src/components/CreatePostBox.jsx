@@ -87,7 +87,7 @@ export function CreatePostBox({ openModal, setOpenModal }) {
         popup
         dismissible
       >
-        <Modal.Body>
+        <Modal.Body className="bg-white dark:bg-gray-800">
           <div className="flex flex-col justify-center">
             <p className="mt-4 text-md text-gray-800 text-center">
               Create New Post

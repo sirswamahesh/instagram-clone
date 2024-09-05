@@ -8,13 +8,13 @@ import { BsThreeDots } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { authUser, getUserProfile } from "../redux/user/userSlice";
 import CustomToast from "./CustomToast";
-
 const UserProfile = () => {
   const { userProfile, currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("posts");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const handleTabChange = (tab) => {
     setTab(tab);
   };
@@ -63,91 +63,125 @@ const UserProfile = () => {
       }, 3000);
     }
   };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener("resize", handleResize);
 
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <div className="min-h-screen w-full p-4">
-      <div className="flex items-start gap-14 justify-center">
-        <Avatar
-          placeholderInitials="CN"
-          className="object-cover text-3xl"
-          img={userProfile?.profilePicture}
-          rounded
-          alt="Profile Picture"
-          size="xl"
-          shadow="md"
-        />
-
-        <div className="flex flex-col gap-7">
-          <div className="flex gap-5 items-center">
-            <h1 className="text-2xl font-bold dark:text-white">
-              {userProfile?.username}
-            </h1>
-            {user ? (
-              <>
-                <Link to="/edit-profile">
-                  <Button size="sm" color="light">
-                    Edit Profile
-                  </Button>
-                </Link>
-                <Button size="sm" color="light">
-                  View archive
-                </Button>
-                <IoSettingsOutline size={30} />
-              </>
-            ) : (
-              <>
-                <Button
-                  size="sm"
-                  color="light"
-                  onClick={handleFollowToggle}
-                  style={{
-                    boxShadow: "none",
-                  }}
-                  className="hover:shadow-none"
-                >
-                  {loading ? (
-                    <>
-                      <Spinner size="sm" />
-                      <span className="pl-3">Loading...</span>
-                    </>
-                  ) : isFollowing ? (
-                    "Following"
-                  ) : isFollower ? (
-                    "Follow back"
-                  ) : (
-                    "Follow"
-                  )}
-                </Button>
-                <BsThreeDots size={30} />
-              </>
-            )}
-          </div>
-          <div className="flex gap-10">
-            <p>
+      <div className="sm:flex items-start flex-col sm:flex-row gap-14 sm:justify-center justify-start">
+        <div className="flex gap-5 items-start ">
+          <Avatar
+            placeholderInitials="CN"
+            className="object-cover text-3xl"
+            img={userProfile?.profilePicture}
+            rounded
+            alt="Profile Picture"
+            size={isMobile ? "lg" : "xl"}
+            shadow="md"
+          />
+          <div className=" flex sm:hidden gap-4 sm:gap-10 mt-5 ">
+            <p className="flex flex-col items-center sm:flex">
               <span className="font-semibold">
                 {userProfile?.posts?.length}{" "}
               </span>
               Posts
             </p>
-            <p>
+            <p className="flex flex-col items-center sm:flex">
               <span className="font-semibold">
                 {userProfile?.followers?.length}{" "}
               </span>
               Followers
             </p>
-            <p>
+            <p className="flex flex-col items-center sm:flex">
+              <span className="font-semibold">
+                {userProfile?.following?.length}
+              </span>
+              Following
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="sm:flex flex-col sm:flex-row gap-5 items-center ">
+            <h1 className="text-2xl font-bold dark:text-white">
+              {userProfile?.username}
+            </h1>
+            <div className="sm:hidden">{userProfile?.bio}</div>
+            <div className="flex gap-5 sm:gap-5 mt-3 items-center">
+              {user ? (
+                <>
+                  <Link to="/edit-profile">
+                    <Button size="sm" color="light">
+                      Edit Profile
+                    </Button>
+                  </Link>
+                  <Button size="sm" color="light">
+                    View archive
+                  </Button>
+                  <Link to="/settings">
+                    <IoSettingsOutline size={20} />
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="sm"
+                    color="light"
+                    onClick={handleFollowToggle}
+                    style={{
+                      boxShadow: "none",
+                    }}
+                    className="hover:shadow-none"
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner size="sm" />
+                        <span className="pl-3">Loading...</span>
+                      </>
+                    ) : isFollowing ? (
+                      "Following"
+                    ) : isFollower ? (
+                      "Follow back"
+                    ) : (
+                      "Follow"
+                    )}
+                  </Button>
+                  <BsThreeDots size={30} />
+                </>
+              )}
+            </div>
+          </div>
+          <div className="sm:flex gap-10 hidden sm:mt-3">
+            <p className="flex flex-col sm:flex sm:flex-row sm:gap-2">
+              <span className="font-semibold">
+                {userProfile?.posts?.length}{" "}
+              </span>
+              Posts
+            </p>
+            <p className="flex flex-col sm:flex sm:flex-row sm:gap-2">
+              <span className="font-semibold">
+                {userProfile?.followers?.length}{" "}
+              </span>
+              Followers
+            </p>
+            <p className="flex flex-col sm:flex sm:flex-row sm:gap-2">
               <span className="font-semibold">
                 {userProfile?.following?.length}{" "}
               </span>
               Following
             </p>
           </div>
-          <div>{userProfile?.bio}</div>
+          <div className="hidden sm:inline">{userProfile?.bio}</div>
         </div>
       </div>
-      <hr className="m-10 bg-slate-950 " />
-      <div className="flex justify-center items-center flex-col">
-        <div className="flex gap-40 mb-5">
+      <hr className="m-1 sm:m-10 bg-slate-950 " />
+      <div className="flex justify-center items-center ml-2 flex-col">
+        <div className="flex gap-40 mb-5 ml-5 text-[15px]">
           <p
             className={tab === "posts" ? "font-semibold" : ""}
             onClick={() => handleTabChange("posts")}
@@ -163,16 +197,16 @@ const UserProfile = () => {
             </p>
           )}
 
-          <p>TAGGED</p>
+          <p className="hidden sm:inline">TAGGED</p>
         </div>
         {renderPosts?.length === 0 ? (
           <p className="text-gray-500 text-lg">No posts available</p>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {renderPosts?.map((post) => (
               <div
                 key={post?.id}
-                className="relative h-[300px] w-[300px] border group"
+                className="relative h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] border group"
               >
                 <img
                   src={post?.image}

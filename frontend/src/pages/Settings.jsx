@@ -37,7 +37,7 @@ const Settings = () => {
       <div className="w-full flex justify-between items-center p-5 bg-slate-200 dark:bg-slate-500 rounded-md">
         <h2 className="dark:text-black">Theme</h2>
         <Button
-          className="w-12 h-10 hidden sm:inline"
+          className="w-12 h-10 "
           color="gray"
           pill
           onClick={() => dispatch(toggleTheme())}
