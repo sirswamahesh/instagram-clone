@@ -179,17 +179,20 @@ const Messages = () => {
               <div>
                 <form
                   onSubmit={messageHandler}
-                  className="absolute bottom-0 left-0 right-0 border-t-[1px] dark:border-slate-900 flex gap-4 p-3 mt-2 "
+                  className="absolute bottom-0 left-0 right-0 border-t-[1px] dark:border-slate-900 flex gap-4  "
                 >
                   <input
                     placeholder="Send a message..."
-                    className="border-0 focus:outline-none w-full dark:text-black dark:bg-slate-800"
+                    className="border-0 focus:outline-none w-full h-[40px] dark:text-white dark:bg-slate-800 p-2"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
                   />
                   {message?.length > 0 && (
-                    <button className="text-blue-500 font-medium" type="submit">
+                    <button
+                      className="text-blue-500 font-medium p-2"
+                      type="submit"
+                    >
                       {loading ? (
                         <div className="flex gap-2">
                           <Spinner size="sm" />

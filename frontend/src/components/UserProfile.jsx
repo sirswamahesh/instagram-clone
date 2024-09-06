@@ -8,6 +8,10 @@ import { BsThreeDots } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { authUser, getUserProfile } from "../redux/user/userSlice";
 import CustomToast from "./CustomToast";
+import { IoIosArrowDown } from "react-icons/io";
+import { CiBoxList } from "react-icons/ci";
+import SaveIcon from "../icons/save";
+
 const UserProfile = () => {
   const { userProfile, currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("posts");
@@ -73,6 +77,16 @@ const UserProfile = () => {
   }, []);
   return (
     <div className="min-h-screen w-full p-4">
+      <div className="flex justify-between sm:hidden">
+        <div className="flex items-center gap-1">
+          {userProfile?.username}
+          <IoIosArrowDown />
+        </div>
+        <Link to="/settings">
+          <IoSettingsOutline size={20} />
+        </Link>
+      </div>
+      <hr className="mb-2 mt-1" />
       <div className="sm:flex items-start flex-col sm:flex-row gap-14 sm:justify-center justify-start">
         <div className="flex gap-5 items-start ">
           <Avatar
@@ -116,14 +130,14 @@ const UserProfile = () => {
               {user ? (
                 <>
                   <Link to="/edit-profile">
-                    <Button size="sm" color="light">
+                    <Button size="sm" color="light" className="px-5">
                       Edit Profile
                     </Button>
                   </Link>
-                  <Button size="sm" color="light">
-                    View archive
+                  <Button size="sm" color="light" className="px-5">
+                    Share profile
                   </Button>
-                  <Link to="/settings">
+                  <Link to="/settings" className="hidden sm:inline">
                     <IoSettingsOutline size={20} />
                   </Link>
                 </>
@@ -179,18 +193,22 @@ const UserProfile = () => {
           <div className="hidden sm:inline">{userProfile?.bio}</div>
         </div>
       </div>
-      <hr className="m-1 sm:m-10 bg-slate-950 " />
-      <div className="flex justify-center items-center ml-2 flex-col">
-        <div className="flex gap-40 mb-5 ml-5 text-[15px]">
+      <hr className="m-1 mt-5 sm:m-10 bg-slate-950 " />
+      <div className="flex justify-center items-center flex-col">
+        <div className="flex gap-20 sm:gap-40 mb-3 text-[15px]">
           <p
-            className={tab === "posts" ? "font-semibold" : ""}
+            className={`${
+              tab === "posts" && "font-semibold"
+            } flex items-center gap-1`}
             onClick={() => handleTabChange("posts")}
           >
-            POSTS
+            <span>POSTS</span>
           </p>
           {user && (
             <p
-              className={tab === "saved" ? "font-semibold" : ""}
+              className={`${
+                tab === "saved" && "font-semibold"
+              } flex items-center gap-1`}
               onClick={() => handleTabChange("saved")}
             >
               SAVED
@@ -203,34 +221,36 @@ const UserProfile = () => {
           <p className="text-gray-500 text-lg">No posts available</p>
         ) : (
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {renderPosts?.map((post) => (
-              <div
-                key={post?.id}
-                className="relative h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] border group"
-              >
-                <img
-                  src={post?.image}
-                  alt="Post"
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="text-white text-center flex gap-3">
-                    <p className="flex items-center">
-                      <span className="text-[20px] mr-1">
-                        {post?.likes?.length}
-                      </span>
-                      <FaRegHeart size={20} />
-                    </p>
-                    <p className="flex items-center">
-                      <span className="text-[20px] mr-1">
-                        {post?.comments?.length}
-                      </span>
-                      <LuMessageCircle size={23} />
-                    </p>
+            {renderPosts?.map((post) => {
+              return (
+                <div
+                  key={post?.id}
+                  className="relative h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] border group"
+                >
+                  <img
+                    src={post?.image}
+                    alt="Post"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="text-white text-center flex gap-3">
+                      <p className="flex items-center">
+                        <span className="text-[20px] mr-1">
+                          {post?.likes?.length}
+                        </span>
+                        <FaRegHeart size={20} />
+                      </p>
+                      <p className="flex items-center">
+                        <span className="text-[20px] mr-1">
+                          {post?.comments?.length}
+                        </span>
+                        <LuMessageCircle size={23} />
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

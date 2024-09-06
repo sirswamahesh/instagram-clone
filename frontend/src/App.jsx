@@ -33,7 +33,7 @@ export default function App() {
   const { socket } = useSelector((state) => state.socket);
   useEffect(() => {
     if (currentUser?.user) {
-      const socket = io("http://localhost:3000", {
+      const socket = io("http://localhost:5000", {
         query: {
           userId: currentUser?.user?.id,
         },

@@ -163,7 +163,11 @@ export function SideBar() {
               <Sidebar.Item icon={FaRegSquarePlus}>Create</Sidebar.Item>
             </div>
 
-            <Sidebar.Item as={Link} to="/profile" icon={CgProfile}>
+            <Sidebar.Item
+              as={Link}
+              to={`/profile/${currentUser.user.id}`}
+              icon={CgProfile}
+            >
               Profile
             </Sidebar.Item>
             <Sidebar.Item as={Link} to="/settings" icon={IoSettingsOutline}>

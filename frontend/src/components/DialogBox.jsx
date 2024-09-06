@@ -62,9 +62,8 @@ export function DialogBox({ openModal, setOpenModal, post }) {
               <>
                 <p className="my-5 text-md text-red-800">Report</p>
                 <hr className="border-gray-300 mb-5" />
-                {currentUser.user.id !== post.author.id && (
+                {currentUser.user.id !== post.authorId && (
                   <>
-                    {" "}
                     <p className="mb-5 text-md text-red-800">Unfollow</p>
                     <hr className="border-gray-300 mb-5" />
                   </>
@@ -73,13 +72,20 @@ export function DialogBox({ openModal, setOpenModal, post }) {
                 <p className="mb-5 text-md text-gray-800">Add to favourites</p>
                 <hr className="border-gray-300 mb-5" />
 
-                {currentUser.user.id === post.author.id && (
+                {currentUser.user.id === post.authorId && (
                   <>
                     <p
                       className="mb-5 text-md text-gray-800 cursor-pointer"
                       onClick={deletePostHandler}
                     >
-                      Delete Post
+                      {loading ? (
+                        <>
+                          <Spinner />
+                          Loading...
+                        </>
+                      ) : (
+                        "Delete Post"
+                      )}
                     </p>
                     <hr className="border-gray-300 mb-5" />
                   </>

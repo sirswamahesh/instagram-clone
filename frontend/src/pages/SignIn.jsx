@@ -22,7 +22,7 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return alert("Please fill out all fields.");
+      return CustomToast("Please fill out all fields.");
     }
     setLoading(true);
     setError(null);

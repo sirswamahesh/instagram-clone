@@ -1,5 +1,5 @@
 import { Avatar, Button, Select, Spinner, Textarea } from "flowbite-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { authUser } from "../redux/user/userSlice";
 import CustomToast from "../components/CustomToast";
@@ -13,6 +13,8 @@ const EditProfile = () => {
     bio: currentUser?.user?.bio,
     gender: currentUser?.user?.gender || "",
   });
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const dispatch = useDispatch();
   const navigation = useNavigate();
 
@@ -67,7 +69,14 @@ const EditProfile = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener("resize", handleResize);
 
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <div className="w-full flex justify-center">
       <div className="border max-w-3xl w-full p-5">
@@ -81,14 +90,14 @@ const EditProfile = () => {
                 img={currentUser?.user?.profilePicture}
                 rounded
                 alt="Profile Picture"
-                size={"lg"}
+                size={isMobile ? "md" : "lg"}
                 shadow="md"
               />
               <div className="font-medium dark:text-white ">
-                <h1 className="text-[20px] mb-2">
+                <h1 className="text-[15px]  sm:mb-2 sm:text-[20px]">
                   {currentUser?.user?.username}
                 </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-[11px] sm:text-sm text-gray-500 dark:text-gray-400">
                   {currentUser?.user?.bio}
                 </p>
               </div>
@@ -102,6 +111,7 @@ const EditProfile = () => {
               />
               <Button
                 className="bg-[#0095F6]"
+                size={isMobile && "xs"}
                 onClick={() => imageRef?.current.click()}
               >
                 Change Photo

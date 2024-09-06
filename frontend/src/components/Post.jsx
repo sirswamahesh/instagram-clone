@@ -152,8 +152,8 @@ const Post = ({ post }) => {
           )}
         </div>
       </div>
-      <div className="w-full h-[438px]">
-        <img src={post.image} className="h-full w-full object-cover rounded" />
+      <div className="w-full h-[308px] sm:h-[458px]">
+        <img src={post.image} className="h-full w-full object-cover " />
       </div>
       <div className="flex justify-between my-4">
         <div className="flex justify-between gap-3">
